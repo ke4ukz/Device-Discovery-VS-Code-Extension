@@ -188,9 +188,9 @@ The extension is named **Device Discovery** (`device-discovery`). Before the
 first VSIX release, set the intended `publisher` and release `version` in
 `package.json`. The publisher must be the intended
 identifier; folder names do not determine extension identity. A Marketplace
-release also needs the chosen licensing and repository metadata. After creating
-the GitHub repository, set `repository` to its actual URL in `package.json`; no
-remote is currently configured. Publisher and licensing have not been finalized.
+release also needs the chosen licensing. Repository, homepage, and issue links
+point to [the GitHub project](https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension).
+Publisher and licensing have not been finalized.
 
 To install locally, open VS Code's Extensions view, use its **…** menu, choose
 **Install from VSIX…**, and select the generated file. Windows and Linux support

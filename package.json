@@ -89,5 +89,13 @@
     "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs",
     "vscode:prepublish": "npm run check && npm test",
     "package": "npx --yes @vscode/vsce package --no-dependencies"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension.git"
+  },
+  "homepage": "https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension#readme",
+  "bugs": {
+    "url": "https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension/issues"
   }
 }
