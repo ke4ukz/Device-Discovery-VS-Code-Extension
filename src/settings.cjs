@@ -1,7 +1,7 @@
 exports.readScanSettings = (configuration, discoverers) => {
   const seconds = configuration.get('scanDuration', 5);
-  if (!Number.isInteger(seconds) || seconds < 1 || seconds > 300) {
-    throw new Error('Device Discovery scan duration must be a whole number from 1 to 300 seconds.');
+  if (!Number.isInteger(seconds) || seconds < 0) {
+    throw new Error('Device Discovery scan duration must be a nonnegative whole number of seconds. Use 0 to scan continuously.');
   }
   const serviceTypes = configuration.get('mdns.serviceTypes', []);
   if (!Array.isArray(serviceTypes) || serviceTypes.some(value => typeof value !== 'string' ||

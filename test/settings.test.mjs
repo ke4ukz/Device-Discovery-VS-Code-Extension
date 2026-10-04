@@ -29,7 +29,9 @@ test('duration defaults to five seconds and enabled list filters only scan-all i
   const configured = readScanSettings(mock({ scanDuration: 2, 'discoverers.crestron.enabled': false }).configuration, protocols);
   assert.equal(configured.duration, 2000);
   assert.deepEqual(configured.enabledDiscoverers, [{ id: 'future' }]);
-  for (const scanDuration of [0, 301, 1.5, '5']) {
+  assert.equal(readScanSettings(mock({ scanDuration: 0 }).configuration, protocols).duration, 0);
+  assert.equal(readScanSettings(mock({ scanDuration: 3000000 }).configuration, protocols).duration, 3000000000);
+  for (const scanDuration of [-1, 1.5, '5', Infinity]) {
     assert.throws(() => readScanSettings(mock({ scanDuration }).configuration, protocols), /whole number/);
   }
 });

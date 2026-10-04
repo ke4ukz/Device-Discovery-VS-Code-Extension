@@ -66,12 +66,14 @@ test('scan uses adapter broadcasts and merges changing IP/source ports by MAC', 
   assert.equal(socket.closeCount, 1);
 });
 
-test('cancellation closes sockets and returns partial results', async () => {
+test('continuous scan stays open until cancellation and returns partial results', async () => {
   const socket = new FakeSocket();
   const controller = new AbortController();
-  const promise = scan(adapter, { createSocket: () => socket, signal: controller.signal });
+  const promise = scan(adapter, { createSocket: () => socket, signal: controller.signal, duration: 0 });
   await new Promise(resolve => setImmediate(resolve));
   socket.emit('message', packet(), { address: '10.0.1.3' });
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.equal(socket.closeCount, 0);
   controller.abort();
   assert.equal((await promise).length, 1);
   assert.equal(socket.closeCount, 1);

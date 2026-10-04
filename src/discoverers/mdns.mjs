@@ -1,5 +1,6 @@
 import dgram from 'node:dgram';
 import { query, decode, ServiceCache } from '../mdns-protocol.mjs';
+import { scanTimer } from '../scan-timer.mjs';
 
 const group = '224.0.0.251';
 const enumeration = '_services._dns-sd._udp.local.';
@@ -35,10 +36,10 @@ export function scan(adapter, { signal, duration = 5000, onDevice = () => {}, lo
       } else types.add(value.endsWith('.local') ? `${value}.` : `${value}.local.`);
     }
     const results = () => cache.devices().filter(device => matchesServiceType(device.serviceType, serviceTypes));
-    let interval, timer, finished = false;
+    let interval, stopTimer = () => {}, finished = false;
     const finish = error => {
       if (finished) return;
-      finished = true; clearInterval(interval); clearTimeout(timer);
+      finished = true; clearInterval(interval); stopTimer();
       signal?.removeEventListener('abort', cancel);
       try { socket.close(); } catch { /* Bind can fail before a socket is open. */ }
       error ? reject(error) : resolve(results());
@@ -96,7 +97,7 @@ export function scan(adapter, { signal, duration = 5000, onDevice = () => {}, lo
             }
             onDevice(results());
           };
-          timer = setTimeout(() => finish(), duration);
+          stopTimer = scanTimer(duration, () => finish());
           interval = setInterval(browse, 1000);
           browse();
         } catch (error) { finish(error); }

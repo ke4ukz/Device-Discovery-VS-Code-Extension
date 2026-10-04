@@ -46,9 +46,8 @@
         "deviceDiscovery.scanDuration": {
           "type": "integer",
           "default": 5,
-          "minimum": 1,
-          "maximum": 300,
-          "description": "How long to listen for discovery responses, in seconds. Applies to all discoverers. Results appear as they arrive.",
+          "minimum": 0,
+          "description": "How long to listen for discovery responses, in seconds. Set 0 to scan continuously until cancelled. Positive whole numbers have no configured upper limit. Applies to all discoverers. Results appear as they arrive.",
           "order": 1
         },
         "deviceDiscovery.defaultAdapter": {
@@ -86,7 +85,7 @@
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs",
+    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs && node --check src/scan-timer.mjs",
     "vscode:prepublish": "npm run check && npm test",
     "package": "npx --yes @vscode/vsce package --no-dependencies"
   },

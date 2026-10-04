@@ -40,7 +40,7 @@ exports.activate = async context => {
     show();
     try {
       await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification,
-        title: `Discovering ${discoverer?.name ?? 'all'} devices (${settings.duration / 1000} seconds)`, cancellable: true }, async (_, token) => {
+        title: `Discovering ${discoverer?.name ?? 'all'} devices (${settings.duration === 0 ? 'continuous — cancel to stop' : `${settings.duration / 1000} seconds`})`, cancellable: true }, async (_, token) => {
         const cancellation = token.onCancellationRequested(() => controller?.abort());
         try {
           if (token.isCancellationRequested) controller.abort();

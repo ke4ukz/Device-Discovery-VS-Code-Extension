@@ -1,6 +1,7 @@
 import dgram from 'node:dgram';
 import os from 'node:os';
 import { parseResponse } from './crestron-protocol.mjs';
+import { scanTimer } from '../scan-timer.mjs';
 
 export const crestron = {
   id: 'crestron', name: 'Crestron',
@@ -20,11 +21,11 @@ export function scan(adapter, { signal, onDevice = () => {}, log = () => {},
     if (signal?.aborted) { resolve([]); return; }
     const socket = createSocket();
     const devices = new Map();
-    let timer, interval, finished = false;
+    let stopTimer = () => {}, interval, finished = false;
     const finish = error => {
       if (finished) return;
       finished = true;
-      clearTimeout(timer);
+      stopTimer();
       clearInterval(interval);
       signal?.removeEventListener('abort', cancel);
       try { socket.close(); } catch { /* A failed bind may leave no open socket. */ }
@@ -61,7 +62,7 @@ export function scan(adapter, { signal, onDevice = () => {}, log = () => {},
               socket.send(query, 41794, target, error => { if (error) finish(error); });
             }
           };
-          timer = setTimeout(() => finish(), duration);
+          stopTimer = scanTimer(duration, () => finish());
           interval = setInterval(send, 5000);
           send();
         } catch (error) { finish(error); }

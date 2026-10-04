@@ -112,7 +112,7 @@ test('service filtering applies to both live updates and final results', async (
 
 test('mDNS binds shared port, browses types, resolves split packets, and cancels cleanly', async () => {
   const socket = new FakeSocket(), controller = new AbortController();
-  const promise = scan(adapter, { signal: controller.signal, createSocket: () => socket });
+  const promise = scan(adapter, { signal: controller.signal, duration: 0, createSocket: () => socket });
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(socket.binding, { port: 5353, address: '0.0.0.0' });
   assert.deepEqual(socket.membership, ['224.0.0.251', adapter.address]);
@@ -123,6 +123,8 @@ test('mDNS binds shared port, browses types, resolves split packets, and cancels
   assert.ok(socket.sends.length > initialCount);
   socket.emit('message', detailPacket);
   socket.emit('message', Buffer.alloc(3)); // Malformed traffic cannot end the scan.
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.equal(socket.closeCount, 0);
   controller.abort();
   assert.equal((await promise).length, 1);
   assert.equal(socket.closeCount, 1);
