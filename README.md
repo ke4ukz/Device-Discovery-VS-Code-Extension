@@ -72,7 +72,7 @@ Device Discovery is licensed under the GNU General Public License, version 3 (GP
 
 ## AI Disclosure
 
-This tool was adapted to TypeScript as a VS Code extension with the assistance of an AI agent from a project that was created before AI agent coding was a thing.
+This tool was adapted to JavaScript as a VS Code extension with the assistance of an AI agent from a project that was created before AI agent coding was a thing.
 
 ## Manufacturer affiliation
 
