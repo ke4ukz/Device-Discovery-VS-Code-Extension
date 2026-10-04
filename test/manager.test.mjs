@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { scanDiscoverers } from '../src/manager.mjs';
-import { importCapture, discoverers } from '../src/registry.mjs';
+import { discoverers } from '../src/registry.mjs';
 import { createRequire } from 'node:module';
 const { render } = createRequire(import.meta.url)('../src/table.cjs');
 
@@ -77,11 +77,8 @@ test('summary accepts only required fields; custom tables use registry columns',
   assert.ok(custom.includes('&lt;unsafe&gt;'));
 });
 
-test('registry commands match the extension manifest and capture imports reject unsupported formats', async () => {
+test('registry commands match the extension manifest', async () => {
   const { readFile } = await import('node:fs/promises');
   const manifest = JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
   for (const discoverer of discoverers) assert.ok(manifest.contributes.commands.some(command => command.command === discoverer.command));
-  assert.throws(() => importCapture({}), /not a discovery capture/);
-  assert.throws(() => importCapture({ discovererId: 'unknown', captures: [] }), /No capture parser/);
-  assert.equal(importCapture({ captures: [] }).discoverer.id, 'crestron');
 });

@@ -2,12 +2,6 @@
 
 Discover network devices from desktop VS Code. Device Discovery currently supports Crestron devices and mDNS/DNS-SD services, with separate detailed tables and a combined summary view.
 
-## Install
-
-In VS Code's Extensions view, open the **…** menu, choose **Install from VSIX…**, and select the downloaded `.vsix` file. You do not need Node.js, the source repository, or a `launch.json` to use the installed extension.
-
-Crestron and mDNS discovery have been tested on macOS. Windows and Linux remain unverified. Browser-only VS Code is unsupported.
-
 ## Scan for devices
 
 1. Open the Command Palette (**Cmd+Shift+P** on macOS, **Ctrl+Shift+P** on Windows/Linux).
@@ -26,7 +20,7 @@ Results appear as responses arrive. Scans last five seconds by default. Set Scan
 
 Select table text to copy it. Individual discoverer tables also include expandable raw details. Run **Device Discovery: Show Devices** to reopen the current results.
 
-**Device Discovery: Open Capture** opens a previously saved Crestron discovery JSON file without scanning. These results are historical. mDNS capture import is not currently supported.
+Click **Export CSV** on the results page or run **Device Discovery: Export Results to CSV** to save the current results using the same columns and row order as the table. Choose a filename in the save dialog. You can export completed, cancelled, or running scans; during a running scan, the export captures the results available when you invoke the command. CSV files use UTF-8 and preserve commas, quotes, and multiline values.
 
 ## Settings
 

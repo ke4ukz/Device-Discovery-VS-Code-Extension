@@ -12,7 +12,6 @@ export const crestron = {
     ['macAddress', 'MAC Address'], ['firmwareBuildDate', 'Firmware Build Date'],
   ],
   scan,
-  parseCapture: packet => parseResponse(Buffer.from(packet.hex, 'hex')),
 };
 
 export function scan(adapter, { signal, onDevice = () => {}, log = () => {},

@@ -1,19 +1,25 @@
 const vscode = require('vscode');
 const { render } = require('./table.cjs');
 const { readScanSettings, selectAdapter } = require('./settings.cjs');
+const { toCsv, defaultFilename } = require('./csv.cjs');
+const os = require('node:os');
+const path = require('node:path');
 
 exports.activate = async context => {
   const { listAdapters } = await import('./adapters.mjs');
-  const { discoverers, importCapture } = await import('./registry.mjs');
+  const { discoverers } = await import('./registry.mjs');
   const { scanDiscoverers } = await import('./manager.mjs');
   const output = vscode.window.createOutputChannel('Device Discovery');
-  let panel, controller, activeDiscoverer, nextAdapter, devices = [], status = 'Run a scan or open a saved capture to view devices.';
+  let panel, controller, activeDiscoverer, nextAdapter, devices = [], status = 'Run a scan to view devices.';
   const refresh = () => { if (panel) panel.webview.html = render(devices, status, activeDiscoverer); };
   const show = () => {
     const title = activeDiscoverer ? `${activeDiscoverer.name} Devices` : 'All Devices';
     if (panel) { panel.title = title; panel.reveal(); }
     else {
-      panel = vscode.window.createWebviewPanel('deviceDiscovery', title, vscode.ViewColumn.One, { localResourceRoots: [] });
+      panel = vscode.window.createWebviewPanel('deviceDiscovery', title, vscode.ViewColumn.One, { enableScripts: true, localResourceRoots: [] });
+      panel.webview.onDidReceiveMessage(message => {
+        if (message?.command === 'exportCsv') return vscode.commands.executeCommand('deviceDiscovery.exportCsv');
+      });
       panel.onDidDispose(() => { panel = undefined; });
     }
     refresh();
@@ -64,19 +70,19 @@ exports.activate = async context => {
       vscode.window.showErrorMessage(status);
     } finally { controller = undefined; refresh(); }
   };
-  const openCapture = async () => {
-    if (controller) { vscode.window.showInformationMessage('Finish or cancel the scan before opening a capture.'); return; }
-    const files = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { 'Discovery capture': ['json'] } });
-    if (!files || controller) return;
-    try {
-      const capture = JSON.parse(Buffer.from(await vscode.workspace.fs.readFile(files[0])).toString('utf8'));
-      const imported = importCapture(capture);
-      if (controller) return;
-      activeDiscoverer = imported.discoverer;
-      devices = imported.devices;
-      status = `Saved capture from ${capture.localAddress ?? 'unknown adapter'}; these are historical results.`;
-      show();
-    } catch (error) { vscode.window.showErrorMessage(`Cannot open capture: ${error.message}`); }
+  const exportCsv = async () => {
+    if (!devices.length) { vscode.window.showInformationMessage('No results to export. Run a discovery scan first.'); return; }
+    // Snapshot before the dialog so a continuous scan or a new scan cannot
+    // change the exported table while the user is choosing a filename.
+    const csv = toCsv(devices, activeDiscoverer);
+    const name = defaultFilename(activeDiscoverer?.id ?? 'all');
+    const destination = await vscode.window.showSaveDialog({
+      title: 'Export discovery results to CSV', saveLabel: 'Export',
+      filters: { 'CSV files': ['csv'] }, defaultUri: vscode.Uri.file(path.join(os.homedir(), name)),
+    });
+    if (!destination) return;
+    await vscode.workspace.fs.writeFile(destination, Buffer.from(csv, 'utf8'));
+    output.appendLine(`Exported results to ${destination.fsPath}`);
   };
   const chooseAdapter = async () => {
     const selected = await selectAdapter(vscode, listAdapters(), { force: true,
@@ -95,6 +101,6 @@ exports.activate = async context => {
     command('deviceDiscovery.scanAll', () => runScan()),
     command('deviceDiscovery.selectAdapter', chooseAdapter),
     command('deviceDiscovery.show', show),
-    command('deviceDiscovery.import', openCapture),
+    command('deviceDiscovery.exportCsv', exportCsv),
     { dispose() { controller?.abort(); panel?.dispose(); } });
 };

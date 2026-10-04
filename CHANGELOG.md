@@ -7,7 +7,7 @@
 - Display protocol-specific tables and shared discovery summaries.
 - Configure scan duration, including continuous scanning until cancelled, enabled discoverers, default adapter, and mDNS filters.
 - Reuse adapter names when IP addresses change; prompt when unavailable.
-- Inspect saved Crestron discovery captures without network access.
+- Export current discovery results to CSV using the displayed table columns.
 
 Crestron and mDNS discovery have been tested on macOS. Windows and Linux have
 not yet been validated. Packet-capture protocols such as CDP are not included.
