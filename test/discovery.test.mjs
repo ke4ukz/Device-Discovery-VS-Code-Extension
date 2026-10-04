@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
 import { createRequire } from 'node:module';
-import { parseResponse } from '../tools/protocol.mjs';
+import { parseResponse } from '../src/discoverers/crestron-protocol.mjs';
 import { scan, crestron } from '../src/discoverers/crestron.mjs';
 const { render } = createRequire(import.meta.url)('../src/table.cjs');
 

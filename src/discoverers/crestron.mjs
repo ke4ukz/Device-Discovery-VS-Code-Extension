@@ -1,6 +1,6 @@
 import dgram from 'node:dgram';
 import os from 'node:os';
-import { parseResponse } from '../../tools/protocol.mjs';
+import { parseResponse } from './crestron-protocol.mjs';
 
 export const crestron = {
   id: 'crestron', name: 'Crestron',

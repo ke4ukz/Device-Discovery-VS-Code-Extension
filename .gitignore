@@ -2,3 +2,12 @@ examples/
 captures/
 node_modules/
 *.vsix
+.vscode/
+AGENTS.md
+CLAUDE.md
+HANDOFF.md
+
+# OS files and package-manager output
+.DS_Store
+Thumbs.db
+npm-debug.log*

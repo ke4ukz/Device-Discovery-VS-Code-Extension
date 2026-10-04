@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { parseResponse } from './protocol.mjs';
+import { parseResponse } from '../src/discoverers/crestron-protocol.mjs';
 
 if (!process.argv[2]) throw new Error('Usage: node tools/replay.mjs captures/discovery-....json');
 const capture = JSON.parse(await readFile(process.argv[2], 'utf8'));

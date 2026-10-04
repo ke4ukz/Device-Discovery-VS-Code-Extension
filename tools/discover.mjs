@@ -2,7 +2,7 @@ import dgram from 'node:dgram';
 import os from 'node:os';
 import { isIP } from 'node:net';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { parseResponse } from './protocol.mjs';
+import { parseResponse } from '../src/discoverers/crestron-protocol.mjs';
 
 // IPv6 mode is an experimental transport test, not a verified Crestron protocol.
 const ipv6 = process.argv[2] === '--ipv6';

@@ -1,7 +1,7 @@
 # Device Discovery
 
 A desktop VS Code extension with a central manager and protocol-specific
-discoverers. Crestron and mDNS/DNS-SD are supported. Its detailed table shows
+discoverers. Crestron and mDNS/DNS-SD are supported. The Crestron table shows
 hostname, model, IP address, Serial Number/TSID, firmware, MAC address, and build
 date. Each future discoverer can define its own columns.
 
@@ -11,7 +11,7 @@ date. Each future discoverer can define its own columns.
 2. Press **F5** and select **Run Device Discovery**. A separate Extension
    Development Host window opens. No dependency installation or build is needed.
 3. In that window's Command Palette, run **Device Discovery: Scan for Crestron Devices**.
-4. Select the adapter connected to the devices (currently `10.0.1.69`). Choose
+4. Select the adapter connected to the devices. Choose
    **Use as Default** to reuse it automatically, or **Use Once** for this scan.
 
 The scan defaults to five seconds and can be cancelled from its progress notification.
@@ -27,10 +27,26 @@ Use **Device Discovery: Open Capture** to inspect a JSON file from `captures/`
 without network access, or **Show Devices** to reopen the current table. Open
 **View → Output → Device Discovery** for network diagnostics.
 
+## Development launch setup
+
+The local `.vscode/` folder is excluded from Git. For a fresh clone, create
+`.vscode/launch.json` with this configuration, then press F5:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "Run Device Discovery",
+    "type": "extensionHost",
+    "request": "launch",
+    "args": ["--extensionDevelopmentPath=${workspaceFolder}"]
+  }]
+}
+```
+
 ## Settings
 
-Open VS Code Settings and search for **Device Discovery** (or
-`@ext:device-discovery` when the extension is loaded). These are normal VS Code
+Open VS Code Settings and search for **Device Discovery** . These are normal VS Code
 settings; changes apply to the next scan.
 
 - **Scan Duration** (`deviceDiscovery.scanDuration`): 1–300 seconds, default 5.
@@ -60,7 +76,7 @@ tools if the UDP port is already occupied.
 
 The extension runs on the local desktop, including with remote workspaces.
 Browser-only VS Code is unsupported. IPv6 experiments remain in the standalone
-[probe](tools/README.md); IPv6 discovery is not enabled in the extension.
+probe under `tools/` (in the source checkout); IPv6 discovery is not enabled in the extension.
 
 Serial Number/TSID retains the reported `#`, `%`, or `$` prefix without conversion.
 The parser is validated against captured RMC4, TSW-1060, TSW-560P, and MPC3-101
@@ -153,3 +169,30 @@ The scan still enumerates available service types, and directly queries the
 configured types so they can be found even if a device omits enumeration replies.
 Only advertised services with resolved IPv4 addresses are shown; this is not a
 port scanner or a guarantee of finding every service on the network.
+
+## Package and install
+
+Run from the repository root with Node.js 20 or later and npm:
+
+```sh
+npm run package
+```
+
+This downloads/runs Microsoft's `@vscode/vsce` packaging tool, runs syntax checks
+and tests, and produces a `.vsix` without publishing it. Runtime code has no npm
+dependencies. Only `src/`, the extension manifest, README, changelog, and a license
+file if present are included; captures, examples, tests, tools, and local notes
+are excluded.
+
+The extension is named **Device Discovery** (`device-discovery`). Before the
+first VSIX release, set the intended `publisher` and release `version` in
+`package.json`. The publisher must be the intended
+identifier; folder names do not determine extension identity. A Marketplace
+release also needs the chosen licensing and repository metadata. After creating
+the GitHub repository, set `repository` to its actual URL in `package.json`; no
+remote is currently configured. Publisher and licensing have not been finalized.
+
+To install locally, open VS Code's Extensions view, use its **…** menu, choose
+**Install from VSIX…**, and select the generated file. Windows and Linux support
+remain unverified; Crestron and mDNS were tested live on macOS. See
+[Microsoft's packaging guide](https://code.visualstudio.com/api/working-with-extensions/publishing-extension).

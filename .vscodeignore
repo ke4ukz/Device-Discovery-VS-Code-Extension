@@ -1,9 +1,6 @@
-.git/**
-.vscode/**
-captures/**
-examples/**
-test/**
-tools/discover.mjs
-tools/replay.mjs
-tools/README.md
-AGENTS.md
+**
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE
+!src/**
