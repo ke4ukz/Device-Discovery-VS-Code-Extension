@@ -1,11 +1,11 @@
 # Device Discovery
 
-Discover network devices from desktop VS Code. Device Discovery currently supports Crestron devices and mDNS/DNS-SD services, with separate detailed tables and a combined summary view.
+Discover network devices from desktop VS Code. Device Discovery currently supports Crestron devices, mDNS/DNS-SD services, and Global Caché/AMX-compatible discovery beacons, with separate detailed tables and a combined summary view.
 
 ## Scan for devices
 
 1. Open the Command Palette (**Cmd+Shift+P** on macOS, **Ctrl+Shift+P** on Windows/Linux).
-2. Run **Device Discovery: Scan for Crestron Devices**, **Scan for mDNS Devices**, or **Scan for All Devices**.
+2. Run **Device Discovery: Scan for Crestron Devices**, **Scan for mDNS Devices**, **Scan for Global Caché Devices**, **Scan for AMX Discovery Devices**, or **Scan for All Devices**.
 3. If prompted, select the network adapter connected to your devices. Choose **Use as Default** to reuse it or **Use Once** for this scan.
 
 Results appear as responses arrive. Scans last five seconds by default. Set Scan Duration to **0** for continuous discovery, and use **Cancel** in the progress notification to stop. Cancelling keeps the results received so far. Each new scan replaces the previous results.
@@ -16,6 +16,8 @@ Results appear as responses arrive. Scans last five seconds by default. Set Scan
 
 - **Crestron:** hostname, model, IP address, Serial Number/TSID, firmware, MAC address, and firmware build date. Serial Number/TSID preserves the reported `#`, `%`, or `$` prefix without conversion. Repeated responses are combined by MAC address.
 - **mDNS:** service name, service type, hostname, IP address, port, and TXT records. A host can advertise several services, so multiple rows may share an IP address. MAC addresses are generally unavailable through mDNS.
+- **Global Caché:** Global Caché beacons, showing manufacturer, model, IP address, revision, UUID, and other reported fields, including MAC address when identifiable from the UUID.
+- **AMX Discovery:** AMX-compatible beacons from other manufacturers, with the same detailed columns. Global Caché devices appear only in their own category. This finds devices advertising the protocol, rather than every AMX device.
 - **All Devices:** discoverer, IP address, and hostname/MAC address when available. Results from different discoverers stay separate even when their IP addresses match.
 
 Select table text to copy it. Individual discoverer tables also include expandable raw details. Run **Device Discovery: Show Devices** to reopen the current results.
@@ -32,6 +34,8 @@ Open VS Code Settings and search for **Device Discovery**. Changes apply to the 
 | **Default Adapter** | Adapter name, such as `en0`, `Ethernet`, or `Wi-Fi`. Its current IPv4 address is looked up for each scan. Leave empty to choose when scanning. |
 | **Discoverers: Crestron: Enabled** | Include Crestron in **Scan for All Devices**. Enabled by default. |
 | **Discoverers: mDNS: Enabled** | Include mDNS in **Scan for All Devices**. Enabled by default. |
+| **Discoverers: Global Cache: Enabled** | Include Global Caché in **Scan for All Devices**. Enabled by default. |
+| **Discoverers: AMX: Enabled** | Include other AMX-compatible devices in **Scan for All Devices**. Enabled by default. |
 | **mDNS: Service Types** | Limit mDNS results to selected service types. An empty list shows all discovered services. |
 
 Disabling a discoverer affects **Scan for All Devices**; its individual scan command remains available. If all discoverers are disabled, Scan for All asks you to enable one.
@@ -59,6 +63,8 @@ The filter applies to mDNS results in both individual and combined scans. Other 
 Choose the adapter connected to the devices you want to find. Devices on a different subnet may not reply even if connected to the same switch. An empty scan does not prove that a device is absent.
 
 mDNS shows advertised services with resolved IPv4 addresses. A connected device may not advertise any services. Increase Scan Duration if service resolution needs more time, and check your service filter if expected services are missing. IPv6 discovery is not currently supported.
+
+Global Caché and AMX discovery listen for periodic announcements. Some devices announce only every 10–60 seconds, so a five-second scan can miss them. Use continuous scanning or allow at least 65 seconds. Scan for All shares one listener between these categories and assigns each beacon to one category.
 
 Firewalls, multicast filtering, and other discovery applications can affect results. Close competing discovery tools if a port is occupied. Open **View → Output → Device Discovery** for error messages and network diagnostics.
 

@@ -3,7 +3,7 @@
   "displayName": "Device Discovery",
   "description": "Discover network devices using extensible protocol-specific discoverers.",
   "publisher": "ke4ukz",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -23,6 +23,14 @@
       {
         "command": "deviceDiscovery.scanMdns",
         "title": "Device Discovery: Scan for mDNS Devices"
+      },
+      {
+        "command": "deviceDiscovery.scanGlobalCache",
+        "title": "Device Discovery: Scan for Global Cach\u00e9 Devices"
+      },
+      {
+        "command": "deviceDiscovery.scanAmx",
+        "title": "Device Discovery: Scan for AMX Discovery Devices"
       },
       {
         "command": "deviceDiscovery.scanAll",
@@ -80,13 +88,25 @@
           },
           "description": "Only show these mDNS service types in mDNS and Scan for All results. Empty shows all discovered services. Use short names such as _http and _ssh (any transport), or full types such as _http._tcp.local (specific transport). Changes apply to the next scan.",
           "order": 5
+        },
+        "deviceDiscovery.discoverers.globalCache.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include Global Cach\u00e9 in Scan for All Devices. Direct scans remain available when unchecked. Global Cach\u00e9 and AMX Discovery share a single beacon listener and produce separate results.",
+          "order": 6
+        },
+        "deviceDiscovery.discoverers.amx.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include AMX-compatible devices from other manufacturers in Scan for All Devices. Direct scans remain available when unchecked. Global Cach\u00e9 and AMX Discovery share a single beacon listener and produce separate results.",
+          "order": 7
         }
       }
     }
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs && node --check src/scan-timer.mjs && node --check src/csv.cjs",
+    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs && node --check src/scan-timer.mjs && node --check src/csv.cjs && node --check src/amx-protocol.mjs && node --check src/discoverers/amx.mjs",
     "vscode:prepublish": "npm run check && npm test",
     "package": "npx --yes @vscode/vsce package --no-dependencies"
   },

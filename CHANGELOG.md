@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Add Global Caché and AMX-compatible beacon discovery with separate commands and enable settings.
+- Share one multicast listener during combined scans and categorize each device without duplicates.
+- Show manufacturer, model, IP, MAC when available, revision, UUID, and other reported fields.
+
 ## 1.0.0
 
 - Discover Crestron devices and browse mDNS/DNS-SD services.
