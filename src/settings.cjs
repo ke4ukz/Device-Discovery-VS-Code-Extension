@@ -3,8 +3,14 @@ exports.readScanSettings = (configuration, discoverers) => {
   if (!Number.isInteger(seconds) || seconds < 1 || seconds > 300) {
     throw new Error('Device Discovery scan duration must be a whole number from 1 to 300 seconds.');
   }
+  const serviceTypes = configuration.get('mdns.serviceTypes', []);
+  if (!Array.isArray(serviceTypes) || serviceTypes.some(value => typeof value !== 'string' ||
+    !/^_[a-z0-9][a-z0-9-]*(?:\._(?:tcp|udp)(?:\.local)?\.?)?$/i.test(value.trim()))) {
+    throw new Error('mDNS service types must be a list such as _http, _ssh, or _http._tcp.local. Leave the list empty to show all services.');
+  }
   return {
     duration: seconds * 1000,
+    discovererOptions: { mdns: { serviceTypes: serviceTypes.map(value => value.trim().toLowerCase()) } },
     enabledDiscoverers: discoverers.filter(discoverer =>
       configuration.get(`discoverers.${discoverer.id}.enabled`, true) !== false),
   };

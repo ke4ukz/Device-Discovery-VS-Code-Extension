@@ -56,6 +56,15 @@ test('manager deduplicates within a discoverer and rejects missing IP', async ()
   assert.match(result.errors[0].message, /without an IP address/);
 });
 
+test('per-discoverer options reach only the intended discoverer in combined scans', async () => {
+  const protocols = ['crestron', 'mdns'].map(id => ({ id, name: id, async scan(_, options) {
+    assert.deepEqual(options.serviceTypes, id === 'mdns' ? ['_http'] : undefined);
+    return [];
+  } }));
+  const result = await scanDiscoverers(protocols, {}, { discovererOptions: { mdns: { serviceTypes: ['_http'] } } });
+  assert.deepEqual(result.errors, []);
+});
+
 test('summary accepts only required fields; custom tables use registry columns', () => {
   const summary = render([{ ip: '10.0.1.3', discoverer: 'Test' }], 'Done');
   assert.ok(summary.includes('Discoverer'));

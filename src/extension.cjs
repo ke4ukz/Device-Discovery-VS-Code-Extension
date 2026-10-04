@@ -45,6 +45,7 @@ exports.activate = async context => {
         try {
           if (token.isCancellationRequested) controller.abort();
           const result = await scanDiscoverers(selectedDiscoverers, selected, { signal: controller.signal, duration: settings.duration,
+            discovererOptions: settings.discovererOptions,
             log: message => output.appendLine(message),
             onDevice: results => { devices = results; refresh(); } });
           devices = result.devices;

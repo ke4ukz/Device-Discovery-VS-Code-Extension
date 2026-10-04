@@ -1,7 +1,7 @@
 # Device Discovery
 
 A desktop VS Code extension with a central manager and protocol-specific
-discoverers. Crestron is the first supported protocol. Its detailed table shows
+discoverers. Crestron and mDNS/DNS-SD are supported. Its detailed table shows
 hostname, model, IP address, Serial Number/TSID, firmware, MAC address, and build
 date. Each future discoverer can define its own columns.
 
@@ -18,7 +18,7 @@ The scan defaults to five seconds and can be cancelled from its progress notific
 Results update as packets arrive and duplicate responses are combined by MAC.
 **Device Discovery: Scan for All Devices** runs all registered discoverers
 concurrently and shows Discoverer, IP Address, and optional Hostname/MAC Address.
-Currently this runs only Crestron; it is not a general scan of every IP address.
+Currently this runs Crestron and mDNS; it is not a general scan of every IP address.
 Results from different discoverers remain separate even if their IP matches.
 A failed discoverer reports an error while the others continue.
 Each new scan replaces previous results. Select table text to copy it.
@@ -40,6 +40,8 @@ settings; changes apply to the next scan.
 - **Discoverers: Crestron: Enabled**
   (`deviceDiscovery.discoverers.crestron.enabled`): include Crestron in **Scan for
   All Devices**, enabled by default. Direct Crestron scans remain available.
+  **Discoverers: mDNS: Enabled** (`deviceDiscovery.discoverers.mdns.enabled`)
+  similarly controls mDNS inclusion. Both are enabled by default.
   Each added discoverer gets its own checkbox here. If all are disabled,
   Scan for All explains that a discoverer needs to be enabled.
 
@@ -104,3 +106,50 @@ with Node sockets; no packet capture is implemented. Shared protocols such as
 mDNS should use one shared transport if multiple discoverers need the same port.
 The current adapter picker supplies IPv4 addresses; a future IPv6 discoverer
 will need adapter selection extended to supply scoped IPv6 addresses as well.
+
+## mDNS discovery
+
+Run **Device Discovery: Scan for mDNS Devices** and choose an adapter connected
+to a home or office network with advertised services. The table displays service
+name, service type, hostname, IPv4 address, port, and TXT records. A host may
+advertise several services, so several rows can share an IP. mDNS records do not
+normally supply a MAC address; the summary leaves that field blank.
+
+The discoverer browses `_services._dns-sd._udp.local.` to enumerate service types,
+then resolves PTR, SRV, TXT, and A records. It also directly queries HTTP, HTTPS,
+SSH, Shure, and the Dante service types from the supplied Python example. This
+can discover printers and other DNS-SD services beyond the original fixed list.
+Only services that advertise an IPv4 address are displayed in this first version;
+a device being connected does not mean it advertises an mDNS service.
+
+The socket shares UDP port 5353 and joins `224.0.0.251` on the selected adapter;
+outgoing multicast uses that adapter's current IPv4 address. It uses ordinary
+UDP, requires no packet-sniffing driver, and closes when the configured scan
+ends or is cancelled. Bonjour, firewall rules, and multicast filtering can affect
+live results; inspect the Device Discovery Output channel for socket errors.
+Five seconds is a starting point; increase Scan Duration if service resolution
+needs more time. Current capture import supports the original Crestron packet
+format only; mDNS capture import has not been added.
+
+Protocol references: [mDNS (RFC 6762)](https://www.rfc-editor.org/rfc/rfc6762.html)
+and [DNS-SD (RFC 6763)](https://www.rfc-editor.org/rfc/rfc6763.html).
+
+### Filter mDNS services
+
+In Settings, edit **Device Discovery → mDNS: Service Types**. An empty list
+shows all discovered service types. Add `_http` and `_ssh` to show just those
+services, or `_http._tcp.local` to match one exact service/transport. Short names
+match both TCP and UDP. Matching is case-insensitive; full types may have a
+trailing dot. The filter applies to direct mDNS scans and Scan for All, leaving
+other discoverers' results unchanged. Changes apply to the next scan.
+
+Equivalent settings JSON:
+
+```json
+"deviceDiscovery.mdns.serviceTypes": ["_http", "_ssh"]
+```
+
+The scan still enumerates available service types, and directly queries the
+configured types so they can be found even if a device omits enumeration replies.
+Only advertised services with resolved IPv4 addresses are shown; this is not a
+port scanner or a guarantee of finding every service on the network.

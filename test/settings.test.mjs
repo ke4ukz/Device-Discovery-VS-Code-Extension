@@ -41,6 +41,15 @@ test('valid default skips both picker and confirmation', async () => {
   assert.equal(calls.prompts.length, 0);
 });
 
+test('mDNS service filter settings normalize names and reject invalid entries', () => {
+  const configured = readScanSettings(mock({ 'mdns.serviceTypes': ['_HTTP', ' _ssh._tcp.local. '] }).configuration, []);
+  assert.deepEqual(configured.discovererOptions.mdns.serviceTypes, ['_http', '_ssh._tcp.local.']);
+  assert.deepEqual(readScanSettings(mock().configuration, []).discovererOptions.mdns.serviceTypes, []);
+  for (const value of ['_http,_ssh', ['http'], [''], [42], ['_http.*']]) {
+    assert.throws(() => readScanSettings(mock({ 'mdns.serviceTypes': value }).configuration, []), /mDNS service types/);
+  }
+});
+
 test('saved adapter name survives a change of IPv4 address and netmask', async () => {
   const { vscode, calls } = mock({ defaultAdapter: 'en0' });
   const changed = { ...adapters[0], address: '169.254.0.69', netmask: '255.255.0.0' };

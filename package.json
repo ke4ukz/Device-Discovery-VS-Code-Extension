@@ -20,6 +20,10 @@
         "title": "Device Discovery: Scan for Crestron Devices"
       },
       {
+        "command": "deviceDiscovery.scanMdns",
+        "title": "Device Discovery: Scan for mDNS Devices"
+      },
+      {
         "command": "deviceDiscovery.scanAll",
         "title": "Device Discovery: Scan for All Devices"
       },
@@ -59,12 +63,29 @@
           "default": true,
           "description": "Include the Crestron discoverer in Scan for All Devices. The Scan for Crestron Devices command remains available when unchecked.",
           "order": 3
+        },
+        "deviceDiscovery.discoverers.mdns.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include mDNS service discovery in Scan for All Devices. The Scan for mDNS Devices command remains available when unchecked.",
+          "order": 4
+        },
+        "deviceDiscovery.mdns.serviceTypes": {
+          "type": "array",
+          "default": [],
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^_[a-zA-Z0-9][a-zA-Z0-9-]*(?:\\._(?:tcp|udp)(?:\\.local)?\\.?)?$"
+          },
+          "description": "Only show these mDNS service types in mDNS and Scan for All results. Empty shows all discovered services. Use short names such as _http and _ssh (any transport), or full types such as _http._tcp.local (specific transport). Changes apply to the next scan.",
+          "order": 5
         }
       }
     }
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check tools/protocol.mjs && node --check src/settings.cjs"
+    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check tools/protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs"
   }
 }
