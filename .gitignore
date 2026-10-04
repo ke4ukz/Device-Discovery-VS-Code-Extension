@@ -1,0 +1,4 @@
+examples/
+captures/
+node_modules/
+*.vsix

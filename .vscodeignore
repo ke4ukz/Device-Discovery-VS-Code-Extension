@@ -1,0 +1,9 @@
+.git/**
+.vscode/**
+captures/**
+examples/**
+test/**
+tools/discover.mjs
+tools/replay.mjs
+tools/README.md
+AGENTS.md
