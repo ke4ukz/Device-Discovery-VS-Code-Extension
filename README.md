@@ -188,11 +188,23 @@ The extension is named **Device Discovery** (`device-discovery`). Before the
 first VSIX release, set the intended `publisher` and release `version` in
 `package.json`. The publisher must be the intended
 identifier; folder names do not determine extension identity. A Marketplace
-release also needs the chosen licensing. Repository, homepage, and issue links
+release uses GPLv3. Repository, homepage, and issue links
 point to [the GitHub project](https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension).
-Publisher and licensing have not been finalized.
+The publisher identifier has not been finalized.
 
 To install locally, open VS Code's Extensions view, use its **…** menu, choose
 **Install from VSIX…**, and select the generated file. Windows and Linux support
 remain unverified; Crestron and mDNS were tested live on macOS. See
 [Microsoft's packaging guide](https://code.visualstudio.com/api/working-with-extensions/publishing-extension).
+
+## License
+
+Device Discovery is licensed under the GNU General Public License, version 3
+(GPLv3). See [LICENSE](LICENSE) for the full terms.
+
+## Manufacturer affiliation
+
+Device Discovery is an independent project and is not affiliated with, endorsed
+by, or sponsored by any manufacturer whose devices it discovers. Manufacturer
+names, product names, and trademarks belong to their respective owners and are
+used solely to identify supported devices and protocols.

@@ -97,5 +97,6 @@
   "homepage": "https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension#readme",
   "bugs": {
     "url": "https://github.com/ke4ukz/Device-Discovery-VS-Code-Extension/issues"
-  }
+  },
+  "license": "GPL-3.0-only"
 }
