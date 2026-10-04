@@ -7,11 +7,11 @@ exports.defaultFilename = (method = 'all', date = new Date()) => {
   return `${day}_${time}-device-discovery-${method}.csv`;
 };
 
-exports.toCsv = (devices, discoverer) => {
+exports.toCsv = (devices, discoverer, options) => {
   const columns = columnsFor(discoverer);
   const quote = value => `"${String(value ?? '').replaceAll('"', '""')}"`;
   const rows = [columns.map(([, label]) => label),
-    ...sortDevices(devices).map(device => columns.map(([field]) => device[field]))];
+    ...sortDevices(devices, options).map(device => columns.map(([field]) => device[field]))];
   // UTF-8 BOM helps spreadsheet applications recognize Unicode device names.
   return '\uFEFF' + rows.map(row => row.map(quote).join(',')).join('\r\n') + '\r\n';
 };

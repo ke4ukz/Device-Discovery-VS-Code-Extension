@@ -8,7 +8,7 @@ Discover network devices from desktop VS Code. Device Discovery currently suppor
 2. Run **Device Discovery: Scan for Crestron Devices**, **Scan for mDNS Devices**, **Scan for Global Caché Devices**, **Scan for AMX Discovery Devices**, or **Scan for All Devices**.
 3. If prompted, select the network adapter connected to your devices. Choose **Use as Default** to reuse it or **Use Once** for this scan.
 
-Results appear as responses arrive. Scans last five seconds by default. Set Scan Duration to **0** for continuous discovery, and use **Cancel** in the progress notification to stop. Cancelling keeps the results received so far. Each new scan replaces the previous results.
+Results appear as responses arrive. Scans last five seconds by default. Set Scan Duration to **0** for continuous discovery, and use **Stop** on the results page to finish. Timed scans show **Cancel** instead. Stopping or cancelling keeps the results received so far. Closing the results page also stops an active scan. Use **Refresh Scan** after a timed scan or **Start** after stopping a continuous scan to run the same discovery method again using the same adapter, with its current IP address. These buttons keep existing results, update matching devices, and append newly found devices. Other scan settings are read again when restarting. Scans launched from the Command Palette select an adapter as usual and replace the previous results.
 
 **Scan for All Devices** runs all enabled discoverers concurrently. It discovers supported advertised protocols rather than probing every IP address. A failed discoverer reports its error while the others continue.
 

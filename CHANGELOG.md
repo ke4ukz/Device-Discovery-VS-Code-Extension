@@ -2,6 +2,10 @@
 
 ## 1.1.0
 
+- Reuse the results tab’s adapter and retain/update rows when restarting; append new devices without reordering existing rows.
+
+- Keep scan progress and controls in the results page, with Cancel/Refresh Scan for timed scans and Stop/Start for continuous scans.
+
 - Add Global Caché and AMX-compatible beacon discovery with separate commands and enable settings.
 - Share one multicast listener during combined scans and categorize each device without duplicates.
 - Show manufacturer, model, IP, MAC when available, revision, UUID, and other reported fields.
