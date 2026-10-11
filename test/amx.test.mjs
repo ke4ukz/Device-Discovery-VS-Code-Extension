@@ -54,6 +54,7 @@ test('combined scan uses one listener, routes categories, deduplicates, and clos
   const result = await pending;
   assert.equal(calls, 1);
   assert.equal(result.devices.length, 2);
+  assert.ok(result.devices.every(device => Number.isFinite(Date.parse(device.lastSeen))));
   assert.deepEqual(result.devices.map(device => device.discovererId), ['globalCache', 'amx']);
   assert.deepEqual(result.errors, []);
   assert.equal(socket.closed, true);

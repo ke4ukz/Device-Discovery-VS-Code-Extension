@@ -37,7 +37,7 @@ export function scan(adapter, { signal, onDevice = () => {}, log = () => {},
       if (finished) return;
       const parsed = parseResponse(bytes);
       if (!parsed) { log(`Ignored ${bytes.length}-byte packet from ${sender.address}`); return; }
-      const device = { ip: sender.address, ...parsed };
+      const device = { ip: sender.address, ...parsed, lastSeen: new Date().toISOString() };
       // A device may change IP or reply repeatedly from different source ports.
       devices.set(parsed.macAddress ?? `${sender.address}/${parsed.hostname}`, device);
       onDevice([...devices.values()]);

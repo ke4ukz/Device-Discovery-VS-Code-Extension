@@ -99,7 +99,7 @@ export class ServiceCache {
       }
       const key = `${group}/${JSON.stringify([record.target, record.address, record.port, record.txt])}`;
       if (!record.ttl) this.records.delete(key);
-      else this.records.set(key, { ...record, group, expires: now + record.ttl * 1000 });
+      else this.records.set(key, { ...record, group, lastSeen: now, expires: now + record.ttl * 1000 });
     }
     for (const [key, record] of this.records) if (record.expires <= now) this.records.delete(key);
   }
@@ -116,6 +116,7 @@ export class ServiceCache {
         const instance = ptr.target.slice(0, -(ptr.name.length + 1));
         const hostname = service.target.replace(/\.$/, '');
         devices.push({ ip: address.address, hostname, serviceType, serviceName: instance,
+          lastSeen: new Date(Math.max(ptr.lastSeen, service.lastSeen, address.lastSeen, txt?.lastSeen ?? 0)).toISOString(),
           port: service.port, txtRecords: (txt?.txt ?? []).join('; '),
           identity: `${ptr.target.toLowerCase()}/${address.address}`,
           details: `${ptr.target}\nHost: ${hostname}\nPort: ${service.port}\n${(txt?.txt ?? []).join('\n')}` });

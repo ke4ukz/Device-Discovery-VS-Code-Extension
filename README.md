@@ -20,6 +20,8 @@ Results appear as responses arrive. Scans last five seconds by default. Set Scan
 - **AMX Discovery:** AMX-compatible beacons from other manufacturers, with the same detailed columns. Global Caché devices appear only in their own category. This finds devices advertising the protocol, rather than every AMX device.
 - **All Devices:** discoverer, IP address, and hostname/MAC address when available. Results from different discoverers stay separate even when their IP addresses match.
 
+Every results table includes **Last Seen**, the time since the most recent discovery response for that device or service (for example, “a few seconds ago” or “2 minutes ago”). Times update automatically and switch to a local date and time after 24 hours. Hover to see the precise UTC timestamp. Retained results keep their timestamp until another response arrives. CSV exports preserve the precise UTC timestamp.
+
 Select table text to copy it. Individual discoverer tables also include expandable raw details. Run **Device Discovery: Show Devices** to reopen the current results.
 
 Click **Export CSV** on the results page or run **Device Discovery: Export Results to CSV** to save the current results using the same columns and row order as the table. Choose a filename in the save dialog. You can export completed, cancelled, or running scans; during a running scan, the export captures the results available when you invoke the command. CSV files use UTF-8 and preserve commas, quotes, and multiline values.

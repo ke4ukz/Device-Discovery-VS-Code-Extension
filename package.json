@@ -3,7 +3,7 @@
   "displayName": "Device Discovery",
   "description": "Discover network devices using extensible protocol-specific discoverers.",
   "publisher": "ke4ukz",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "engines": {
     "vscode": "^1.90.0"
   },

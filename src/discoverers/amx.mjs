@@ -22,7 +22,7 @@ export function scanBeacons(adapter, { signal, duration = 5000, onDevice = () =>
       if (finished) return;
       const device = parseBeacon(bytes, sender.address);
       if (!device) { log(`Ignored non-beacon packet from ${sender.address}`); return; }
-      devices.set(device.identity, device);
+      devices.set(device.identity, { ...device, lastSeen: new Date().toISOString() });
       onDevice([...devices.values()]);
     });
     try {

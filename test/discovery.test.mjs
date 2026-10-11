@@ -58,6 +58,8 @@ test('scan uses adapter broadcasts and merges changing IP/source ports by MAC', 
   const result = await promise;
   assert.equal(result.length, 1);
   assert.equal(result[0].ip, '10.0.1.15');
+  assert.ok(Number.isFinite(Date.parse(result[0].lastSeen)));
+  assert.equal(result[0].lastSeen, updates[1][0].lastSeen);
   assert.equal(updates.length, 2);
   assert.deepEqual(socket.binding, { port: 41794, address: adapter.address });
   assert.deepEqual(socket.sends.map(send => send.target), ['255.255.255.255', '10.0.255.255']);

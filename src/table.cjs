@@ -7,11 +7,24 @@ const summaryColumns = [
 const escape = value => String(value ?? '—').replace(/[&<>"']/g,
   character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
-const columnsFor = discoverer => discoverer?.columns ?? summaryColumns;
+const columnsFor = discoverer => [...(discoverer?.columns ?? summaryColumns), ['lastSeen', 'Last Seen']];
 const sortDevices = (devices, { preserveOrder = false } = {}) => preserveOrder ? [...devices]
   : [...devices].sort((a, b) => a.ip.localeCompare(b.ip, undefined, { numeric: true }));
 exports.columnsFor = columnsFor;
 exports.sortDevices = sortDevices;
+
+// Shared with the webview so timestamps also age after a scan stops.
+function formatLastSeen(value, now = Date.now()) {
+  const timestamp = value ? Date.parse(value) : NaN;
+  if (!Number.isFinite(timestamp)) return '—';
+  const seconds = Math.max(0, Math.floor((now - timestamp) / 1000));
+  if (now - timestamp > 24 * 60 * 60 * 1000) return new Date(timestamp).toLocaleString();
+  if (seconds < 60) return 'a few seconds ago';
+  const count = seconds < 3600 ? Math.floor(seconds / 60) : Math.floor(seconds / 3600);
+  const unit = seconds < 3600 ? 'minute' : 'hour';
+  return `${count} ${unit}${count === 1 ? '' : 's'} ago`;
+}
+exports.formatLastSeen = formatLastSeen;
 
 exports.render = (devices, status, discoverer, scanControl) => {
 const nonce = randomBytes(16).toString('base64');
@@ -41,10 +54,20 @@ th { white-space: nowrap; } td { user-select: text; } .scroll { overflow-x: auto
 <div class="scroll"><table><caption>${devices.length} device${devices.length === 1 ? '' : 's'}</caption>
 <thead><tr>${columns.map(([, title]) => `<th scope="col">${title}</th>`).join('')}</tr></thead>
 <tbody>${sortDevices(devices, { preserveOrder: scanControl?.preserveOrder }).map(device =>
-  `<tr>${columns.map(([field]) => `<td>${escape(device[field])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  `<tr>${columns.map(([field]) => field === 'lastSeen'
+    ? `<td><time datetime="${escape(device.lastSeen ?? '')}" title="${escape(device.lastSeen ?? '')}">${escape(formatLastSeen(device.lastSeen))}</time></td>`
+    : `<td>${escape(device[field])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
 ${discoverer ? devices.map(device => `<details><summary>${escape(device.hostname ?? device.ip)} — Raw details</summary><pre>${escape(device.details)}</pre></details>`).join('') : ''}
 <script nonce="${nonce}">
 const vscode = acquireVsCodeApi();
+${formatLastSeen.toString()}
+const updateLastSeen = () => {
+  for (const element of document.querySelectorAll('time[datetime]')) {
+    element.textContent = formatLastSeen(element.dateTime);
+  }
+};
+updateLastSeen();
+setInterval(updateLastSeen, 1000);
 const stopButton = document.getElementById('scanAction');
 stopButton?.addEventListener('click', () => {
   stopButton.disabled = true;

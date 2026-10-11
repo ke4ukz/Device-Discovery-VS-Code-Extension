@@ -148,3 +148,17 @@ test('manager preserves multiple service instances at the same host/IP', async (
   assert.equal(result.devices.length, 2);
   assert.equal(result.devices[0].discoverer, 'mDNS');
 });
+
+test('last seen tracks relevant mDNS responses and survives cached snapshots', () => {
+  const cache = new ServiceCache();
+  const now = Date.now();
+  cache.ingest(decode(ptrPacket), now);
+  cache.ingest(decode(detailPacket), now + 1000);
+  const timestamp = new Date(now + 1000).toISOString();
+  assert.equal(cache.devices()[0].lastSeen, timestamp);
+  cache.ingest([{ name: 'unrelated.local.', type: 1, address: '10.0.1.99', ttl: 120 }], now + 2000);
+  assert.equal(cache.devices()[0].lastSeen, timestamp);
+  assert.equal(cache.devices()[0].lastSeen, timestamp);
+  cache.ingest(decode(ptrPacket), now + 3000);
+  assert.equal(cache.devices()[0].lastSeen, new Date(now + 3000).toISOString());
+});

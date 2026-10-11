@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Add Last Seen to all discovery tables, with automatically updating relative times and local dates after 24 hours.
+- Show precise UTC timestamps on hover and include them in CSV exports.
+- Track response times for Crestron, mDNS, Global Caché, and AMX; retain timestamps until another relevant response arrives.
+
 ## 1.1.0
 
 - Reuse the results tab’s adapter and retain/update rows when restarting; append new devices without reordering existing rows.

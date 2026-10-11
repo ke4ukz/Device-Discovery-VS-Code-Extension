@@ -15,8 +15,8 @@ test('export filename uses padded local date/time and discovery method', () => {
 test('summary CSV uses table columns, numerical IP sorting, and empty optional fields', () => {
   const devices = [{ discoverer: 'mDNS', ip: '10.0.1.15' },
     { discoverer: 'Crestron', ip: '10.0.1.3', hostname: 'Controller' }];
-  assert.equal(toCsv(devices), '\uFEFF"Discoverer","IP Address","Hostname","MAC Address"\r\n'
-    + '"Crestron","10.0.1.3","Controller",""\r\n"mDNS","10.0.1.15","",""\r\n');
+  assert.equal(toCsv(devices), '\uFEFF"Discoverer","IP Address","Hostname","MAC Address","Last Seen"\r\n'
+    + '"Crestron","10.0.1.3","Controller","",""\r\n"mDNS","10.0.1.15","","",""\r\n');
   assert.equal(devices[0].ip, '10.0.1.15');
 });
 
@@ -36,5 +36,5 @@ test('Crestron CSV contains the complete detailed columns and reported TSID', ()
 });
 
 test('empty CSV still provides column headers', () => {
-  assert.equal(toCsv([]), '\uFEFF"Discoverer","IP Address","Hostname","MAC Address"\r\n');
+  assert.equal(toCsv([]), '\uFEFF"Discoverer","IP Address","Hostname","MAC Address","Last Seen"\r\n');
 });
