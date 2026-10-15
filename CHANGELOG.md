@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Update discovery results in place, preserve raw-details expansion, and defer visible updates while text is selected for copying.
+- Add Q-SYS discovery using QDP device and control queries, with linked design names, redundancy roles, and separate LAN port results. Includes a dedicated scan command and a Scan for All setting.
+- Receive QDP multicast announcements on port 2467 so touch panels such as the TSC-70-G3 appear alongside devices that reply unicast.
+
 ## 1.1.1
 
 - Add Last Seen to all discovery tables, with automatically updating relative times and local dates after 24 hours.

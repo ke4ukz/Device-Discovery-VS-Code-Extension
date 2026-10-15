@@ -14,13 +14,15 @@ exports.activate = async context => {
   const output = vscode.window.createOutputChannel('Device Discovery');
   let scanWarning = false;
   let panel, controller, scanControl, activeDiscoverer, activeAdapterName, nextAdapter, devices = [], status = 'Run a scan to view devices.';
-  const refresh = () => { if (panel) panel.webview.html = render(devices, status, activeDiscoverer, scanControl ? { ...scanControl, warning: scanWarning } : undefined); };
+  const page = () => render(devices, status, activeDiscoverer, scanControl ? { ...scanControl, warning: scanWarning } : undefined);
+  const refresh = () => { if (panel) panel.webview.postMessage({ command: 'updateResults', html: page() }); };
   const show = () => {
     const title = activeDiscoverer ? `${activeDiscoverer.name} Devices` : 'All Devices';
     if (panel) { panel.title = title; panel.reveal(); }
     else {
       panel = vscode.window.createWebviewPanel('deviceDiscovery', title, vscode.ViewColumn.One, { enableScripts: true, localResourceRoots: [] });
       panel.webview.onDidReceiveMessage(async message => {
+        if (message?.command === 'ready') { refresh(); return; }
         if (message?.command === 'startScan' && !controller && message.scanId === (scanControl?.id ?? '')) {
           try { await runScan(activeDiscoverer, { resume: true }); }
           catch (error) { status = `Scan failed: ${error.message}`; output.appendLine(status); }
@@ -37,6 +39,7 @@ exports.activate = async context => {
         if (message?.command === 'exportCsv') return vscode.commands.executeCommand('deviceDiscovery.exportCsv');
       });
       panel.onDidDispose(() => { panel = undefined; controller?.abort(); });
+      panel.webview.html = page();
     }
     refresh();
   };

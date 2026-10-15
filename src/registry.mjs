@@ -1,9 +1,10 @@
 import { crestron } from './discoverers/crestron.mjs';
 import { mdns } from './discoverers/mdns.mjs';
 import { globalCache, amx } from './discoverers/amx.mjs';
+import { qsys } from './discoverers/qsys.mjs';
 
 // Add each discoverer here; the extension registers its command and detailed table.
-export const discoverers = [crestron, mdns, globalCache, amx];
+export const discoverers = [crestron, mdns, globalCache, amx, qsys];
 
 export function normalizeDevice(discoverer, device) {
   if (!device || typeof device.ip !== 'string' || !device.ip) {

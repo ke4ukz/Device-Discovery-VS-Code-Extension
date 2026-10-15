@@ -1,11 +1,11 @@
 # Device Discovery
 
-Discover network devices from desktop VS Code. Device Discovery currently supports Crestron devices, mDNS/DNS-SD services, and Global Caché/AMX-compatible discovery beacons, with separate detailed tables and a combined summary view.
+Discover network devices from desktop VS Code. Device Discovery currently supports Crestron devices, mDNS/DNS-SD services, Global Caché/AMX-compatible discovery beacons, and Q-SYS devices, with separate detailed tables and a combined summary view.
 
 ## Scan for devices
 
 1. Open the Command Palette (**Cmd+Shift+P** on macOS, **Ctrl+Shift+P** on Windows/Linux).
-2. Run **Device Discovery: Scan for Crestron Devices**, **Scan for mDNS Devices**, **Scan for Global Caché Devices**, **Scan for AMX Discovery Devices**, or **Scan for All Devices**.
+2. Run **Device Discovery: Scan for Crestron Devices**, **Scan for mDNS Devices**, **Scan for Global Caché Devices**, **Scan for AMX Discovery Devices**, **Scan for Q-SYS Devices**, or **Scan for All Devices**.
 3. If prompted, select the network adapter connected to your devices. Choose **Use as Default** to reuse it or **Use Once** for this scan.
 
 Results appear as responses arrive. Scans last five seconds by default. Set Scan Duration to **0** for continuous discovery, and use **Stop** on the results page to finish. Timed scans show **Cancel** instead. Stopping or cancelling keeps the results received so far. Closing the results page also stops an active scan. Use **Refresh Scan** after a timed scan or **Start** after stopping a continuous scan to run the same discovery method again using the same adapter, with its current IP address. These buttons keep existing results, update matching devices, and append newly found devices. Other scan settings are read again when restarting. Scans launched from the Command Palette select an adapter as usual and replace the previous results.
@@ -18,11 +18,12 @@ Results appear as responses arrive. Scans last five seconds by default. Set Scan
 - **mDNS:** service name, service type, hostname, IP address, port, and TXT records. A host can advertise several services, so multiple rows may share an IP address. MAC addresses are generally unavailable through mDNS.
 - **Global Caché:** Global Caché beacons, showing manufacturer, model, IP address, revision, UUID, and other reported fields, including MAC address when identifiable from the UUID.
 - **AMX Discovery:** AMX-compatible beacons from other manufacturers, with the same detailed columns. Global Caché devices appear only in their own category. This finds devices advertising the protocol, rather than every AMX device.
+- **Q-SYS:** device name, model, IP and MAC address, LAN port, device type, design name, redundancy role, and device reference. Device and control records are merged as replies arrive. Each addressed LAN port has its own row; devices without a reported LAN address use the reply source address.
 - **All Devices:** discoverer, IP address, and hostname/MAC address when available. Results from different discoverers stay separate even when their IP addresses match.
 
 Every results table includes **Last Seen**, the time since the most recent discovery response for that device or service (for example, “a few seconds ago” or “2 minutes ago”). Times update automatically and switch to a local date and time after 24 hours. Hover to see the precise UTC timestamp. Retained results keep their timestamp until another response arrives. CSV exports preserve the precise UTC timestamp.
 
-Select table text to copy it. Individual discoverer tables also include expandable raw details. Run **Device Discovery: Show Devices** to reopen the current results.
+Select table text to copy it. Incoming results update in place and preserve expanded raw details. Visible updates pause while text is selected and resume when the selection is cleared; discovery continues in the background. Individual discoverer tables also include expandable raw details. Run **Device Discovery: Show Devices** to reopen the current results.
 
 Click **Export CSV** on the results page or run **Device Discovery: Export Results to CSV** to save the current results using the same columns and row order as the table. Choose a filename in the save dialog. You can export completed, cancelled, or running scans; during a running scan, the export captures the results available when you invoke the command. CSV files use UTF-8 and preserve commas, quotes, and multiline values.
 
@@ -38,6 +39,7 @@ Open VS Code Settings and search for **Device Discovery**. Changes apply to the 
 | **Discoverers: mDNS: Enabled** | Include mDNS in **Scan for All Devices**. Enabled by default. |
 | **Discoverers: Global Cache: Enabled** | Include Global Caché in **Scan for All Devices**. Enabled by default. |
 | **Discoverers: AMX: Enabled** | Include other AMX-compatible devices in **Scan for All Devices**. Enabled by default. |
+| **Discoverers: Q-SYS: Enabled** | Include Q-SYS in **Scan for All Devices**. Enabled by default. |
 | **mDNS: Service Types** | Limit mDNS results to selected service types. An empty list shows all discovered services. |
 
 Disabling a discoverer affects **Scan for All Devices**; its individual scan command remains available. If all discoverers are disabled, Scan for All asks you to enable one.
@@ -67,6 +69,8 @@ Choose the adapter connected to the devices you want to find. Devices on a diffe
 mDNS shows advertised services with resolved IPv4 addresses. A connected device may not advertise any services. Increase Scan Duration if service resolution needs more time, and check your service filter if expected services are missing. IPv6 discovery is not currently supported.
 
 Global Caché and AMX discovery listen for periodic announcements. Some devices announce only every 10–60 seconds, so a five-second scan can miss them. Use continuous scanning or allow at least 65 seconds. Scan for All shares one listener between these categories and assigns each beacon to one category.
+
+Q-SYS sends QDP queries to `224.0.23.175` on UDP ports `2467` and `2468` every five seconds using the selected adapter. Devices can reply to an ephemeral local UDP port (typically from port `6504`); the discoverer also joins the multicast group on UDP port `2467` to receive periodic announcements from touch panels and other devices. Q-SYS Designer does not need to be open. Allow this traffic through firewalls and multicast filters.
 
 Firewalls, multicast filtering, and other discovery applications can affect results. Close competing discovery tools if a port is occupied. Open **View → Output → Device Discovery** for error messages and network diagnostics.
 

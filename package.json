@@ -3,7 +3,7 @@
   "displayName": "Device Discovery",
   "description": "Discover network devices using extensible protocol-specific discoverers.",
   "publisher": "ke4ukz",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -31,6 +31,10 @@
       {
         "command": "deviceDiscovery.scanAmx",
         "title": "Device Discovery: Scan for AMX Discovery Devices"
+      },
+      {
+        "command": "deviceDiscovery.scanQsys",
+        "title": "Device Discovery: Scan for Q-SYS Devices"
       },
       {
         "command": "deviceDiscovery.scanAll",
@@ -100,13 +104,19 @@
           "default": true,
           "description": "Include AMX-compatible devices from other manufacturers in Scan for All Devices. Direct scans remain available when unchecked. Global Cach\u00e9 and AMX Discovery share a single beacon listener and produce separate results.",
           "order": 7
+        },
+        "deviceDiscovery.discoverers.qsys.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include Q-SYS device and design discovery in Scan for All Devices. The Scan for Q-SYS Devices command remains available when unchecked.",
+          "order": 8
         }
       }
     }
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs && node --check src/scan-timer.mjs && node --check src/csv.cjs && node --check src/results.cjs && node --check src/amx-protocol.mjs && node --check src/discoverers/amx.mjs",
+    "check": "node --check src/extension.cjs && node --check src/manager.mjs && node --check src/registry.mjs && node --check src/adapters.mjs && node --check src/discoverers/crestron.mjs && node --check src/table.cjs && node --check src/discoverers/crestron-protocol.mjs && node --check src/settings.cjs && node --check src/mdns-protocol.mjs && node --check src/discoverers/mdns.mjs && node --check src/scan-timer.mjs && node --check src/csv.cjs && node --check src/results.cjs && node --check src/amx-protocol.mjs && node --check src/discoverers/amx.mjs && node --check src/qsys-protocol.mjs && node --check src/discoverers/qsys.mjs",
     "vscode:prepublish": "npm run check && npm test",
     "package": "npx --yes @vscode/vsce package --no-dependencies"
   },
